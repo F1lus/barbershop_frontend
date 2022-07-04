@@ -1,8 +1,67 @@
 import { motion } from "framer-motion"
 import { Container, Table } from "react-bootstrap"
 
+const priceObjectArray = [
+    {
+        type: 'Hajvágás géppel',
+        price: '2800 Ft',
+        time: '45 perc'
+    },
+    {
+        type: 'Szakállvágás (géppel, borotvával)',
+        price: '1500 Ft',
+        time: '20 perc'
+    },
+    {
+        type: 'Hajvágás géppel és ollóval',
+        price: '3300 Ft',
+        time: '45 perc'
+    },
+    {
+        type: 'Gyermek hajvágás',
+        price: '2000 Ft',
+        time: '30-45 perc'
+    },
+    {
+        type: 'HairBeard Combo (hajvágás és szakállvágás)',
+        price: '4800 Ft',
+        time: '60 perc'
+    },
+    {
+        type: 'Hajfestés/Melír',
+        price: '12000 Ft',
+        time: '60 perc'
+    },
+    {
+        type: 'Szolárium',
+        price: '100 Ft/perc',
+        time: 'Tetszőleges'
+    },
+    {
+        type: 'Szolárium - Bérlet !HAMAROSAN!',
+        price: '80 Ft/perc',
+        time: 'Tetszőleges'
+    },
+    {
+        type: 'Hajmosás',
+        price: 'Ingyenes',
+        time: '15 perc'
+    },
+]
 
 const Pricing = () => {
+
+    const renderTableTr = () => {
+        return priceObjectArray.map((priceObj, index) => {
+            return (
+                <tr key={index} className="text-white">
+                    <td className="border-end border-warning">{priceObj.type}</td>
+                    <td className="border-end border-warning">{priceObj.price}</td>
+                    <td className="border-bottom border-warning">{priceObj.time}</td>
+                </tr>
+            )
+        })
+    }
 
     return (
         <motion.div key="prices">
@@ -16,9 +75,9 @@ const Pricing = () => {
                     A környék legjobb árai
                 </motion.h1>
                 <motion.div
-                    initial={{x: 200, opacity: 0}}
-                    animate={{x: 0, opacity: 1}}
-                    transition={{duration: 1, delay: 1}}
+                    initial={{ x: 200, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    transition={{ duration: 1, delay: 1 }}
                 >
                     <Table className="text-gold" variant="black" responsive='sm'>
                         <thead>
@@ -29,52 +88,7 @@ const Pricing = () => {
                             </tr>
                         </thead>
                         <tbody>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Hajvágás géppel</td>
-                                <td className="border-end border-warning">2800 Ft</td>
-                                <td className="border-bottom border-warning">45 perc</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Szakállvágás (géppel, borotvával)</td>
-                                <td className="border-end border-warning">1500 Ft</td>
-                                <td className="border-bottom border-warning">20 perc</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Hajvágás géppel és ollóval</td>
-                                <td className="border-end border-warning">3300 Ft</td>
-                                <td className="border-bottom border-warning">45 perc</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Gyermek hajvágás</td>
-                                <td className="border-end border-warning">2000 Ft</td>
-                                <td className="border-bottom border-warning">30-45 perc</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">HairBeard Combo (hajvágás és szakállvágás)</td>
-                                <td className="border-end border-warning">4800 Ft</td>
-                                <td className="border-bottom border-warning">60 perc</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Hajfestés/Melír</td>
-                                <td className="border-end border-warning">12000 Ft</td>
-                                <td className="border-bottom border-warning">60 perc</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Szolárium</td>
-                                <td className="border-end border-warning">100 Ft/perc</td>
-                                <td className="border-bottom border-warning">Tetszőleges</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Szolárium - Bérlet !HAMAROSAN!</td>
-                                <td className="border-end border-warning">80 Ft/perc</td>
-                                <td className="border-bottom border-warning">Tetszőleges</td>
-                            </tr>
-                            <tr className="text-white">
-                                <td className="border-end border-warning">Hajmosás</td>
-                                <td className="border-end border-warning">Ingyenes</td>
-                                <td className="border-bottom border-warning">15 perc</td>
-                            </tr>
-
+                            {renderTableTr()}
                         </tbody>
                     </Table>
                 </motion.div>
