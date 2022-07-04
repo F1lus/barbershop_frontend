@@ -15,7 +15,6 @@ import Reserve from './routes/reserve'
 import Confirm from './routes/reserve/Confirm'
 import Privacy from './routes/privacy'
 import NotFound from './routes/not_found'
-import Login from './routes/login'
 
 const paths = ['/', '/pricing', '/reserve']
 
@@ -84,11 +83,6 @@ const routes = [
       {
         path: '/privacy',
         element: <Privacy />,
-        children: []
-      },
-      {
-        path: '/login',
-        element: <Login />,
         children: []
       },
       { path: '*', element: <NotFound /> }
