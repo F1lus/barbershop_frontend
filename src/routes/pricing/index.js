@@ -4,32 +4,32 @@ import { Container, Table } from "react-bootstrap"
 const priceObjectArray = [
     {
         type: 'Hajvágás géppel',
-        price: '2800 Ft',
+        price: '3000 Ft',
         time: '45 perc'
     },
     {
         type: 'Szakállvágás (géppel, borotvával)',
-        price: '1500 Ft',
+        price: '2000 Ft',
         time: '20 perc'
     },
     {
         type: 'Hajvágás géppel és ollóval',
-        price: '3300 Ft',
+        price: '3500 Ft',
         time: '45 perc'
     },
     {
         type: 'Gyermek hajvágás',
-        price: '2000 Ft',
+        price: '3000 Ft',
         time: '30-45 perc'
     },
     {
         type: 'HairBeard Combo (hajvágás és szakállvágás)',
-        price: '4800 Ft',
+        price: '5000 Ft',
         time: '60 perc'
     },
     {
         type: 'Hajfestés/Melír',
-        price: '12000 Ft',
+        price: '10500 Ft',
         time: '60 perc'
     },
     {
