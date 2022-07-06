@@ -1,0 +1,8 @@
+Adatbázis
+
+Features
+type:varchar(1024);price:(int);time:(int);
+
+OpeningHrs
+day:(string);open:(string);close:(string);
+
