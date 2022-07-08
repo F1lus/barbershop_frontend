@@ -43,19 +43,19 @@ export default function Login() {
                 direction="row"
                 justifyContent="center"
                 alignItems="center"
-                className="max-height"
+                className="max-height position-relative"
             >
                 <Grid
                     item
                     container
                     xs={6}
                     id='login-panel'
-                    className='border border-warning rounded shadow'
+                    className='border border-warning rounded shadow position-relative'
                     direction="row"
                     justifyContent="center"
                     alignItems="center"
                 >
-                    <form className="p-5 w-75" onSubmit={handleSubmit}>
+                    <form className="p-5 w-75 position-absolute large-min-height" onSubmit={handleSubmit}>
                         <TextField
                             name='username'
                             variant='standard'
@@ -86,15 +86,16 @@ export default function Login() {
                             <Button variant='contained' color="warning" className="mt-2" type="submit">Bejelentkezés</Button>
                         </Grid>
                     </form>
-                    <Wave fill='#f79902'
-                        className="h-50"
+                    <Wave 
+                        fill='#f79902'
+                        className="h-100 position-absolute bottom-0"
                         options={{
-                            height: 15,
-                            amplitude: 35,
-                            speed: 0.2,
+                            height: 200,
+                            amplitude: 40,
+                            speed: 0.3,
                             points: 5
                         }}
-                    />
+                />
                 </Grid>
             </Grid>
             <Notify show={open} message={formData.notifyMsg} severity='error' setParentState={setOpen} />
