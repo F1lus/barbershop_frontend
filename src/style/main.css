@@ -217,4 +217,13 @@ a{
     }
 }
 
+.max-height{
+    height:88vh;
+    background-image: url('./images/banner.png');
+    background-size: cover;
+    background-position: center;
+}
 
+#login-panel{
+    background-color: rgba(225, 225, 223, 0.874);
+}
