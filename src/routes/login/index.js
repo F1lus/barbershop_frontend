@@ -57,7 +57,7 @@ export default function Login() {
                     container
                     xs={6}
                     id='login-panel'
-                    className='border border-warning rounded shadow position-relative'
+                    className='border border-warning rounded shadow-lg position-relative'
                     direction="row"
                     justifyContent="center"
                     alignItems="center"
