@@ -1,15 +1,14 @@
-import { TextField, Grid, Button, ThemeProvider, createTheme, styled, CssBaseline } from "@mui/material"
+import { TextField, Grid, Button, ThemeProvider, createTheme } from "@mui/material"
 import { useCallback, useState } from "react"
 import { motion } from "framer-motion"
 import Wave from "react-wavify"
 import api from "../../api"
-import Notify from "./Notify"
-import { orange, red } from "@mui/material/colors"
+import Notify from "../../components/notification"
 
 const theme = createTheme({
     palette: {
-        mode: 'dark'
-    }
+        mode: 'dark',
+    },
 })
 
 export default function Login() {
@@ -17,15 +16,9 @@ export default function Login() {
     const [formData, setFormData] = useState({ username: '', password: '', notifyMsg: '' })
     const [open, setOpen] = useState(false)
 
-    const handleChange = useCallback(e => {
-        setFormData(prev => {
-            if (e.target.name === 'username') {
-                return { ...prev, username: e.target.value }
-            } else {
-                return { ...prev, password: e.target.value }
-            }
-        })
-    }, [])
+    const handleChange = useCallback(e => 
+        setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
+    , [])
 
     const handleSubmit = useCallback(e => {
         e.preventDefault()
@@ -72,6 +65,7 @@ export default function Login() {
                                 className="mb-2 mt-5"
                                 autoComplete='off'
                                 type={'text'}
+                                InputLabelProps={{ style: { color: 'white' } }}
                                 required
                                 fullWidth
                                 value={formData.username}
@@ -85,6 +79,7 @@ export default function Login() {
                                 className="mb-4"
                                 autoComplete='off'
                                 type={'password'}
+                                InputLabelProps={{ style: { color: 'white' } }}
                                 required
                                 fullWidth
                                 value={formData.password}
@@ -99,7 +94,7 @@ export default function Login() {
                         fill='#a26400c2'
                         className="h-100 position-absolute bottom-0"
                         options={{
-                            height: 200,
+                            height: 180,
                             amplitude: 40,
                             speed: 0.3,
                             points: 5

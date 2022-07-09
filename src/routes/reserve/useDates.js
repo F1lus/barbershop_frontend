@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 
 import api from "../../api"
 
-const useDates = (dateString, handleLoading) => {
+const useDates = (dateString, handleLoading, setError) => {
 
     const [dates, setDates] = useState()
 
@@ -14,10 +14,10 @@ const useDates = (dateString, handleLoading) => {
                 handleLoading(false)
             })
             .catch(err => {
-                console.log(err.message)
+                setError(err.message)
                 handleLoading(false)
             })
-    },[dateString, handleLoading])
+    },[dateString, handleLoading, setError])
 
     return dates
 }

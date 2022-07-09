@@ -1,8 +1,10 @@
 import {motion } from "framer-motion"
 
-import { Row, Col } from "react-bootstrap"
+import { Grid } from "@mui/material"
+import FacebookIcon from '@mui/icons-material/Facebook';
+import InstagramIcon from '@mui/icons-material/Instagram';
+import LockIcon from '@mui/icons-material/Lock';
 
-import 'bootstrap-icons/font/bootstrap-icons.css'
 import { Link } from "react-router-dom"
 
 import ChooseMe from "./ChooseMe"
@@ -40,27 +42,44 @@ const Home = () => {
 
             <hr />
 
-            <footer className="footer text-center">
+            <footer className="footer text-center container-fluid">
                 <h3>Elérhetőségek</h3>
-                <Row className="justify-content-center my-3">
-                    <Col lg={6}>
+                <Grid
+                    container
+                    direction='row'
+                    justifyContent='center'
+                    sx={{ mb: 2 }}
+                >
+                    <Grid item lg={6}>
                         <b>Email: <a className="color-white" href="mailto:kenisbarbershop@gmail.com">kenisbarbershop@gmail.com</a></b>
-                    </Col>
-                    <Col lg={6}>
+                    </Grid>
+                    <Grid item lg={6}>
                         <b>Telefon: <span className="color-white">+36301405939</span></b>
-                    </Col>
-                </Row>
-                <Row className="justify-content-center mb-3">
-                    <Col lg={4}>
-                        <a href="https://www.facebook.com/Kenis-Barber-Shop-101330481735193"><i className="font-medium bi bi-facebook"></i></a>
-                    </Col>
-                    <Col lg={4}>
-                        <a href="https://www.instagram.com/kenisbarbershop/"><i className="font-medium bi bi-instagram"></i></a>
-                    </Col>
-                    <Col lg={4}>
-                        <Link to='/privacy'><i className="font-medium bi bi-lock-fill"></i></Link>
-                    </Col>
-                </Row>
+                    </Grid>
+                </Grid>
+                <Grid
+                    container
+                    direction='row'
+                    justifyContent='center'
+                    alignItems='center'
+                    sx={{mb: 2, textAlign: 'center' }}
+                >
+                    <Grid item lg={4}>
+                        <a href="https://www.facebook.com/Kenis-Barber-Shop-101330481735193" className="color-white">
+                            <FacebookIcon sx={{ fontSize: 35 }} />
+                        </a>
+                    </Grid>
+                    <Grid item lg={4}>
+                        <a href="https://www.instagram.com/kenisbarbershop/" className="color-white">
+                            <InstagramIcon sx={{ fontSize: 35 }} />
+                        </a>
+                    </Grid>
+                    <Grid item lg={4}>
+                        <Link to='/privacy' className="color-white">
+                            <LockIcon sx={{ fontSize: 35 }} />
+                        </Link>
+                    </Grid>
+                </Grid>
             </footer>
         </div>
     )
