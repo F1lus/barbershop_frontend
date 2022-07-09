@@ -1,9 +1,16 @@
-import { TextField, Grid, Button } from "@mui/material"
+import { TextField, Grid, Button, ThemeProvider, createTheme, styled, CssBaseline } from "@mui/material"
 import { useCallback, useState } from "react"
 import { motion } from "framer-motion"
 import Wave from "react-wavify"
 import api from "../../api"
 import Notify from "./Notify"
+import { orange, red } from "@mui/material/colors"
+
+const theme = createTheme({
+    palette: {
+        mode: 'dark'
+    }
+})
 
 export default function Login() {
 
@@ -56,38 +63,39 @@ export default function Login() {
                     alignItems="center"
                 >
                     <form className="p-5 w-75 position-absolute large-min-height" onSubmit={handleSubmit}>
-                        <TextField
-                            name='username'
-                            variant='standard'
-                            color='warning'
-                            label='Felhasználónév'
-                            className="mb-2 mt-5"
-                            autoComplete='off'
-                            type={'text'}
-                            required
-                            fullWidth
-                            value={formData.username}
-                            onChange={handleChange}
-                        />
-                        <TextField
-                            name='password'
-                            variant='standard'
-                            color='warning'
-                            label='Jelszó'
-                            className="mb-4"
-                            autoComplete='off'
-                            type={'password'}
-                            required
-                            fullWidth
-                            value={formData.password}
-                            onChange={handleChange}
-                        />
+                        <ThemeProvider theme={theme}>
+                            <TextField
+                                name='username'
+                                variant='standard'
+                                label='Felhasználónév'
+                                className="mb-2 mt-5"
+                                autoComplete='off'
+                                type={'text'}
+                                required
+                                fullWidth
+                                value={formData.username}
+                                onChange={handleChange}
+                            />
+                            <TextField
+                                name='password'
+                                variant='standard'
+                                color='warning'
+                                label='Jelszó'
+                                className="mb-4"
+                                autoComplete='off'
+                                type={'password'}
+                                required
+                                fullWidth
+                                value={formData.password}
+                                onChange={handleChange}
+                            />
+                        </ThemeProvider>
                         <Grid container alignItems='center' justifyContent='center'>
-                            <Button variant='contained' color="warning" className="mt-2" type="submit">Bejelentkezés</Button>
+                            <Button variant='contained' color="warning" className="mt-2 " type="submit">Bejelentkezés</Button>
                         </Grid>
                     </form>
-                    <Wave 
-                        fill='#f79902'
+                    <Wave
+                        fill='#a26400c2'
                         className="h-100 position-absolute bottom-0"
                         options={{
                             height: 200,
@@ -95,7 +103,7 @@ export default function Login() {
                             speed: 0.3,
                             points: 5
                         }}
-                />
+                    />
                 </Grid>
             </Grid>
             <Notify show={open} message={formData.notifyMsg} severity='error' setParentState={setOpen} />

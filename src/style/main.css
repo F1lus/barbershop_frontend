@@ -225,7 +225,7 @@ a{
 }
 
 #login-panel{
-    background: rgba(233, 232, 232, 0.501);
+    background: rgba(57, 57, 57, 0.616);
     backdrop-filter: blur( 11.5px );
     -webkit-backdrop-filter: blur( 11.5px );
     min-height: 50vh;
