@@ -5,7 +5,7 @@ const useError = (setShow) => {
     const [error, setError] = useState()
 
     useEffect(() => {
-        if(error) setShow(true)
+        if(!error) return
 
         if(error === 'wrong-phone'){
             setError("A megadott telefonszám nem megfelelő")
@@ -27,9 +27,9 @@ const useError = (setShow) => {
             setError("Belső hiba történt. Kérjük frissítse az oldalt!")
         }else if(error === 'already-reserved'){
             setError("Ez az időpont már foglalt!")
-        }else{
-            setError('A kapcsolata megszakadt a szerverrel!')
         }
+
+        setShow(true)
     }, [error, setShow])
 
     return [error, setError]

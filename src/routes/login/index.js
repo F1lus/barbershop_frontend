@@ -64,8 +64,7 @@ export default function Login() {
                                 label='Felhasználónév'
                                 className="mb-2 mt-5"
                                 autoComplete='off'
-                                type={'text'}
-                                InputLabelProps={{ style: { color: 'white' } }}
+                                type='text'
                                 required
                                 fullWidth
                                 value={formData.username}
@@ -78,8 +77,7 @@ export default function Login() {
                                 label='Jelszó'
                                 className="mb-4"
                                 autoComplete='off'
-                                type={'password'}
-                                InputLabelProps={{ style: { color: 'white' } }}
+                                type='password'
                                 required
                                 fullWidth
                                 value={formData.password}

@@ -41,7 +41,16 @@ const theme = createTheme({
 const Reserve = () => {
 
     const [currentDay, setCurrentDay] = useState()
-    const [form, setForm] = useState({})
+    const [form, setForm] = useState({
+        agree1: '',
+        agree2: '',
+        time: '',
+        date: '',
+        services: '',
+        firstname: '',
+        lastname: '',
+        phone: ''
+    })
     const [show, setShow] = useState(false)
     const [isLoading, setLoading] = useState(false)
 
@@ -128,7 +137,6 @@ const Reserve = () => {
     }, [dateSelect, isLoading])
 
     const handleChange = useCallback(e => {
-        console.log('Changed')
         const name = e.target.name
         const value = e.target.value
 
@@ -207,9 +215,8 @@ const Reserve = () => {
             return
         }
 
-        if (!form.services || form.services === services[0]) {
+        if (!form.services) {
             setErr('no-service')
-            setShow(true)
             return
         }
 
@@ -221,8 +228,6 @@ const Reserve = () => {
 
                 if (data.error) {
                     setErr(data.error)
-                    console.log(data.error)
-                    setShow(true)
                     return
                 }
 
@@ -236,7 +241,7 @@ const Reserve = () => {
             })
             .catch(err => {
                 setLoading(false)
-                console.log(err.message)
+                setErr(err)
             })
     }, [form, currentDay, navigate, setErr])
 
