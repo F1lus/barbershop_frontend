@@ -48,7 +48,9 @@ export default function Login() {
                 <Grid
                     item
                     container
-                    xs={6}
+                    xs={12}
+                    md={6}
+                    lg={6}
                     id='login-panel'
                     className='border border-warning rounded shadow-lg position-relative'
                     direction="row"

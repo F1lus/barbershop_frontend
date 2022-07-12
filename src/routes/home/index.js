@@ -1,6 +1,6 @@
 import {motion } from "framer-motion"
 
-import { Grid } from "@mui/material"
+import { Card, CardMedia, Grid } from "@mui/material"
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LockIcon from '@mui/icons-material/Lock';
@@ -10,6 +10,8 @@ import { Link } from "react-router-dom"
 import ChooseMe from "./ChooseMe"
 import Intro from "./Intro"
 import Showcase from "./Showcase"
+
+
 
 const Home = () => {
 
@@ -33,12 +35,12 @@ const Home = () => {
 
             <hr />
 
-            <div className="mt-3">
-                <div className="gmap_canvas"><iframe title="map" className="gmap_iframe w-100" frameBorder="0" scrolling="no"
-                    marginHeight="0" marginWidth="0"
-                    src="https://maps.google.com/maps?width=1400&amp;height=200&amp;hl=en&amp;q=4555, Levelek új utca 42&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed"></iframe>
-                </div>
-            </div>
+            <Card>
+                <CardMedia 
+                    component='iframe'
+                    src='https://maps.google.com/maps?width=1400&amp;height=200&amp;hl=en&amp;q=4555, Levelek új utca 42&amp;t=&amp;z=13&amp;ie=UTF8&amp;iwloc=B&amp;output=embed'
+                />
+            </Card>
 
             <hr />
 
@@ -48,6 +50,7 @@ const Home = () => {
                     container
                     direction='row'
                     justifyContent='center'
+                    spacing={2}
                     sx={{ mb: 2 }}
                 >
                     <Grid item lg={6}>

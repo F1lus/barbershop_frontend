@@ -37,7 +37,7 @@ a{
 
 .branding{
     position: relative;
-    margin-bottom: 35vh;
+    min-height: 75vh;
 }
 
 .branding::before{
@@ -100,7 +100,7 @@ a{
 }
 
 .intro{
-    color: rgb(230, 164, 0);
+    color: #e6a400;
     text-align: justify;
 }
 

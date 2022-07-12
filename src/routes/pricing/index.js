@@ -1,5 +1,10 @@
+import {
+    TableContainer, Paper, Table,
+    TableHead, TableRow, TableCell,
+    TableBody,
+    Grid
+} from "@mui/material"
 import { motion } from "framer-motion"
-import { Container, Table } from "react-bootstrap"
 
 const priceObjectArray = [
     {
@@ -51,49 +56,50 @@ const priceObjectArray = [
 
 const Pricing = () => {
 
-    const renderTableTr = () => {
+    const renderTableRows = () => {
         return priceObjectArray.map((priceObj, index) => {
             return (
-                <tr key={index} className="text-white">
-                    <td className="border-end border-warning">{priceObj.type}</td>
-                    <td className="border-end border-warning">{priceObj.price}</td>
-                    <td className="border-bottom border-warning">{priceObj.time}</td>
-                </tr>
+                <TableRow key={index} className="text-white" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell sx={{ color: 'white', borderColor: '#e6a400' }} >{priceObj.type}</TableCell>
+                    <TableCell sx={{ color: 'white', borderColor: '#e6a400' }}>{priceObj.price}</TableCell>
+                    <TableCell sx={{ color: 'white', borderColor: '#e6a400' }}>{priceObj.time}</TableCell>
+                </TableRow>
             )
         })
     }
 
     return (
-        <motion.div key="prices">
-            <Container className="mt-5">
-                <motion.h1
-                    initial={{ y: -200, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ duration: 1 }}
-                    className="text-center text-white mb-5"
-                >
-                    A környék legjobb árai
-                </motion.h1>
-                <motion.div
-                    initial={{ x: 200, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    transition={{ duration: 1, delay: 1 }}
-                >
-                    <Table className="text-gold" variant="black" responsive='sm'>
-                        <thead>
-                            <tr>
-                                <th className="border-end border-warning">Típus</th>
-                                <th className="border-end border-warning">Ár</th>
-                                <th>Időtartam</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {renderTableTr()}
-                        </tbody>
+        <Grid sx={{ mt: 5, mb: 5 }}>
+            <motion.h1
+                initial={{ y: -200, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1 }}
+                className="text-center text-white mb-5"
+            >
+                A környék legjobb árai
+            </motion.h1>
+
+            <motion.div
+                initial={{ x: 200, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 1, delay: 1 }}
+            >
+                <TableContainer component={Paper} sx={{ backgroundColor: 'black', width: '75%', m: 'auto' }}>
+                    <Table sx={{  }} aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell sx={{ color: '#e6a400', fontWeight: 'bold', borderColor: '#e6a400' }}>Szolgáltatás</TableCell>
+                                <TableCell sx={{ color: '#e6a400', fontWeight: 'bold', borderColor: '#e6a400' }}>Ár</TableCell>
+                                <TableCell sx={{ color: '#e6a400', fontWeight: 'bold', borderColor: '#e6a400' }}>Időtartam</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {renderTableRows()}
+                        </TableBody>
                     </Table>
-                </motion.div>
-            </Container>
-        </motion.div>
+                </TableContainer>
+            </motion.div>
+        </Grid>
     )
 }
 
