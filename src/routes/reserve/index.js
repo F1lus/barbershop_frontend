@@ -1,58 +1,59 @@
 import { DateTime } from "luxon"
 import { getMonthName, getDayName, calculateWorkdays } from "./DateWorker"
 
-import { useCallback, useEffect, useRef, useState } from "react"
+import { useCallback, useContext, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { motion } from "framer-motion"
-import { Col, Container, Row, Form, Button, InputGroup, ToastContainer, Toast } from "react-bootstrap"
+import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 
 import API from '../../api'
 import useDates from "./useDates"
 
 import useError from "./useError"
-import Loading from "../loading"
+import Loading from "../../components/loading"
+import Notify from "../../components/notification"
+
+import {
+    Grid, TextField, createTheme,
+    InputAdornment, ThemeProvider, FormGroup,
+    FormControlLabel, Checkbox, Button,
+    MenuItem
+} from "@mui/material"
+import { LoadingContext } from "../../components/loading/context"
 
 const services = [
-    "Válasszon szolgáltatást!",
     "Hajvágás géppel", "Szakállvágás (géppel, borotvával)", "Hajvágás géppel és ollóval",
     "Gyermek hajvágás", "HairBeard Combo (hajvágás és szakállvágás)", "Hajfestés/Melír"
 ]
 
-const Reserve = () => {
+const theme = createTheme({
+    palette: {
+        mode: 'dark'
+    }
+})
+
+const Reserve = ({ setLoading, setError, error, show, setShow }) => {
+
+    const isLoading = useContext(LoadingContext)
 
     const [currentDay, setCurrentDay] = useState()
-    const [form, setForm] = useState({})
-    const [show, setShow] = useState(false)
-    const [isLoading, setLoading] = useState(false)
+    const [form, setForm] = useState({
+        agree1: '',
+        agree2: '',
+        time: '',
+        date: '',
+        services: '',
+        firstname: '',
+        lastname: '',
+        phone: ''
+    })
 
-    const dates = useDates(currentDay, setLoading)
-
-    const [err, setErr] = useError()
+    const dates = useDates(currentDay, setLoading, setError)
 
     const dateRef = useRef()
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-
-        let timeout
-        let load
-
-        if (show) {
-            timeout = setTimeout(() => setShow(s => !s), 5000)
-        }
-
-        if(isLoading){
-            load = setTimeout(() => setLoading(false), 5000)
-        }
-
-        return () => {
-            clearTimeout(timeout)
-            clearTimeout(load)
-        }
-
-    }, [show, isLoading])
 
     const dateSelect = useCallback((event, date) => {
         event.preventDefault()
@@ -136,43 +137,69 @@ const Reserve = () => {
     }, [])
 
     const renderServices = useCallback(() => (
-        <Form.Select disabled={isLoading} name="services" defaultValue={services[0]} onChange={handleChange} required>
-            {
-                services.map((el, i) => (
-                    <option key={i} value={el}>{el}</option>
-                ))
-            }
-        </Form.Select>
-    ), [handleChange, isLoading])
+        <TextField
+            select
+            label="Válasszon szolgáltatást"
+            name='services'
+            value={form.services}
+            onChange={handleChange}
+            variant="filled"
+            disabled={isLoading}
+            color='warning'
+            fullWidth
+            required
+        >
+            {services.map((el, i) => (
+                <MenuItem key={i} value={el}>
+                    {el}
+                </MenuItem>
+            ))}
+        </TextField>
+    ), [handleChange, isLoading, form])
 
     const renderAppointments = useCallback(() => {
         if (!dates) {
             return (
-                <Form.Group as={Col}>
-                    <Form.Label>Időpont választás</Form.Label>
-                    <Form.Select disabled={isLoading} name="time" defaultValue={"Először válasszon egy dátumot!"} onChange={handleChange} required>
-                        <option value={-1} >Először válasszon egy dátumot!</option>
-                    </Form.Select>
-                </Form.Group>
+                <TextField
+                    select
+                    label="Először válasszon egy dátumot!"
+                    error
+                    name='time'
+                    value={form.time}
+                    onChange={handleChange}
+                    variant="filled"
+                    disabled={true}
+                    color='warning'
+                    fullWidth
+                    required
+                >
+                    <MenuItem value={-1}>
+                        Először válasszon egy dátumot!
+                    </MenuItem>
+                </TextField>
             )
         }
 
         return (
-            <Form.Group as={Col}>
-                <Form.Label>Időpont választás</Form.Label>
-                <Form.Select disabled={isLoading} name="time" defaultValue={"Erre a napra már nincs szabad időpont!"} onChange={handleChange} required>
-                    {dates.length === 0 ?
-                        <option value={-1}>Erre a napra már nincs szabad időpont!</option>
-                        :
-                        <option value={-1}>Válasszon időpontot!</option>
-                    }
-                    {dates.length === 0 ? null : dates.map((el, i) => (
-                        <option value={JSON.stringify(el)} key={i}>{el.start} - {el.end}</option>
-                    ))}
-                </Form.Select>
-            </Form.Group>
+            <TextField
+                select
+                label={dates.length === 0 ? 'Erre a napra már nincs szabad időpont!' : 'Válasszon időpontot!'}
+                error={dates.length === 0}
+                name='time'
+                value={form.time}
+                onChange={handleChange}
+                variant="filled"
+                disabled={isLoading || dates.length === 0}
+                color='warning'
+                fullWidth
+                required
+            >
+                {dates.length === 0 ? null : dates.map((el, i) => (
+                    <MenuItem value={JSON.stringify(el)} key={i}>{el.start} - {el.end}</MenuItem>
+                ))}
+            </TextField>
         )
-    }, [dates, handleChange, isLoading])
+    }, [dates, handleChange, isLoading, form])
 
     const handleSubmit = useCallback(e => {
         e.preventDefault()
@@ -181,9 +208,8 @@ const Reserve = () => {
             return
         }
 
-        if (!form.services || form.services === services[0]) {
-            setErr('no-service')
-            setShow(true)
+        if (!form.services) {
+            setError('no-service')
             return
         }
 
@@ -194,9 +220,7 @@ const Reserve = () => {
                 let data = res.data
 
                 if (data.error) {
-                    setErr(data.error)
-                    console.log(data.error)
-                    setShow(true)
+                    setError(data.error)
                     return
                 }
 
@@ -204,120 +228,166 @@ const Reserve = () => {
                     const date = data.date.start.split("T")[0]
                     navigate(`/confirm?date=${date}&time=${data.time}&service=${services.indexOf(form.services)}`)
                 } else {
-                    setErr('Network Error')
+                    setError('Network Error')
                     setShow(true)
                 }
             })
             .catch(err => {
                 setLoading(false)
-                console.log(err.message)
+                setError(err)
             })
-    }, [form, currentDay, navigate, setErr])
+    }, [form, currentDay, navigate, setError, setLoading, setShow])
 
     return (
-        <Loading loading={isLoading}>
+        <>
+            <Notify show={show} message={error} setParentState={setShow} severity='error' />
             <motion.div>
-                <Container fluid className="text-white mt-5">
+                <Grid
+                    container
+                    direction='row'
+                    justifyContent='center'
+                    sx={{ mt: 5, color: 'white' }}
+                >
+                    <Grid
+                        item
+                        lg={6}
+                        md={6}
+                        sm={12}
+                    >
+                        {renderDays()}
+                    </Grid>
+                    <Grid
+                        item
+                        lg={6}
+                        md={6}
+                        sm={12}
+                        sx={{ pr: 3 }}
+                    >
+                        <motion.div
+                            initial={{ x: 50, opacity: 0 }}
+                            animate={{ x: 0, opacity: 1 }}
+                            transition={{ delay: 1.2 }}
+                        >
+                            <ThemeProvider theme={theme}>
+                                <form onSubmit={handleSubmit}>
+                                    <label>Felhasználói információk</label>
+                                    <Grid
+                                        container
+                                        direction='row'
+                                        sx={{ mt: 1, mb: 2 }}
+                                    >
+                                        <TextField
+                                            disabled={isLoading}
+                                            name="lastname"
+                                            type="text"
+                                            label='Vezetéknév'
+                                            color="warning"
+                                            variant='filled'
+                                            onChange={handleChange}
+                                            value={form.lastname}
+                                            sx={{ pr: 1, width: '50%' }}
+                                            autoComplete='off'
+                                            required
+                                        />
 
-                    <ToastContainer className="p-5 z-max position-fixed" position="top-center">
-                        <Toast animation show={show} bg="danger" autohide>
-                            <Toast.Header closeButton={false}>
-                                <strong className="me-auto">Hiba!</strong>
-                            </Toast.Header>
-                            <Toast.Body>{err}</Toast.Body>
-                        </Toast>
-                    </ToastContainer>
+                                        <TextField
+                                            disabled={isLoading}
+                                            name="firstname"
+                                            type="text"
+                                            label="Keresztnév"
+                                            color="warning"
+                                            variant='filled'
+                                            onChange={handleChange}
+                                            value={form.firstname}
+                                            sx={{ pl: 1, width: '50%' }}
+                                            autoComplete='off'
+                                            required
+                                        />
+                                    </Grid>
 
-                    <Row className="justify-content-center mt-5">
-                        <Col lg={6} md={6} sm={12}>
-                            {renderDays()}
-                        </Col>
-                        <Col lg={6} md={6} sm={12}>
-                            <motion.div
-                                initial={{ x: 50, opacity: 0 }}
-                                animate={{ x: 0, opacity: 1 }}
-                                transition={{ delay: 1.2 }}
-                            >
-                                <Form onSubmit={handleSubmit}>
-                                    <Row className="mb-3">
-                                        <Form.Label>Felhasználói információk</Form.Label>
-                                        <Form.Group as={Col}>
-                                            <Form.Control
-                                                disabled={isLoading}
-                                                name="lastname"
-                                                type="text"
-                                                placeholder="Vezetéknév"
-                                                onChange={handleChange}
-                                                required
-                                            />
-                                        </Form.Group>
-
-                                        <Form.Group as={Col}>
-                                            <Form.Control
-                                                disabled={isLoading}
-                                                name="firstname"
-                                                type="text"
-                                                placeholder="Keresztnév"
-                                                onChange={handleChange}
-                                                required
-                                            />
-                                        </Form.Group>
-                                    </Row>
-
-                                    <InputGroup className="mb-3">
-                                        <InputGroup.Text>+36</InputGroup.Text>
-                                        <Form.Control
+                                    <Grid
+                                        container
+                                        direction='row'
+                                        sx={{ mb: 2 }}
+                                    >
+                                        <TextField
                                             disabled={isLoading}
                                             name="phone"
                                             type="number"
-                                            placeholder="Telefonszám"
+                                            label="Telefonszám"
+                                            color='warning'
+                                            variant="filled"
+                                            InputProps={{ startAdornment: <InputAdornment position="start">+36</InputAdornment> }}
+                                            autoComplete='off'
+                                            value={form.phone}
                                             onChange={handleChange}
+                                            fullWidth
                                             required
                                         />
-                                    </InputGroup>
+                                    </Grid>
 
-                                    <Row className="mb-3">
-                                        <Form.Group as={Col}>
-                                            <Form.Label>Szolgáltatás választás</Form.Label>
-                                            {renderServices()}
-                                        </Form.Group>
-                                    </Row>
-                                    <Row className="mb-3">
+                                    <label>Szolgáltatás választás</label>
+                                    <Grid
+                                        container
+                                        direction='row'
+                                        sx={{ mb: 2, mt: 1 }}
+                                    >
+                                        {renderServices()}
+                                    </Grid>
+
+                                    <label>Időpont választás</label>
+                                    <Grid
+                                        container
+                                        direction='row'
+                                        sx={{ mb: 2, mt: 1 }}
+                                    >
                                         {renderAppointments()}
-                                    </Row>
-                                    <Form.Group className="mb-3">
-                                        <Form.Check
-                                            disabled={isLoading}
-                                            name="agree1"
-                                            type="checkbox"
-                                            label={<div>Elolvastam, és elfogadom az <Link className="text-warning border-bottom border-warning" to='/privacy'>adatvédemi tájékoztatót</Link></div>}
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
-                                    <Form.Group className="mb-3">
-                                        <Form.Check
-                                            disabled={isLoading}
-                                            name="agree2"
-                                            type="checkbox"
-                                            label="Tudomásul veszem, hogy a fent megadott adatokért nem vállalnak felelősséget"
-                                            onChange={handleChange}
-                                            required
-                                        />
-                                    </Form.Group>
+                                    </Grid>
 
-                                    <Form.Group className="text-center" as={Col}>
-                                        <Button disabled={isLoading} className="px-5 text-center m-auto" variant="warning" type="submit">
-                                            <i className="bi bi-calendar-date-fill"></i> Foglalás
+                                    <FormGroup>
+                                        <FormControlLabel
+                                            control={
+                                                <Checkbox
+                                                    color="warning"
+                                                    disabled={isLoading}
+                                                    name="agree1"
+                                                    onChange={handleChange}
+                                                    required
+                                                />
+                                            }
+                                            label={<div>Elolvastam, és elfogadom az <Link className="text-warning border-bottom border-warning" to='/privacy'>adatvédemi tájékoztatót</Link></div>}
+                                        />
+                                        <FormControlLabel
+
+                                            control={
+                                                <Checkbox
+                                                    color="warning"
+                                                    disabled={isLoading}
+                                                    name="agree2"
+                                                    onChange={handleChange}
+                                                    required
+                                                />
+                                            }
+                                            label="Tudomásul veszem, hogy a fent megadott adatokért nem vállalnak felelősséget" />
+                                    </FormGroup>
+
+                                    <Grid
+                                        container
+                                        direction='row'
+                                        justifyContent='center'
+                                        sx={{ mb: 2, mt: 1 }}
+                                    >
+                                        <Button disabled={isLoading} variant='contained' color='warning' type="submit">
+                                            <EventAvailableIcon /> Foglalás
                                         </Button>
-                                    </Form.Group>
-                                </Form>
-                            </motion.div>
-                        </Col>
-                    </Row>
-                </Container>
+                                    </Grid>
+                                </form>
+                            </ThemeProvider>
+                        </motion.div>
+                    </Grid>
+                </Grid>
             </motion.div>
-        </Loading>
+        </>
     )
 }
 

@@ -9,7 +9,8 @@ import w8 from "../../style/images/w8.jpeg"
 
 import { motion } from "framer-motion"
 
-import { Container, Row, Col, Card } from "react-bootstrap"
+import { Grid, Card, CardMedia } from "@mui/material"
+import { Fragment } from "react"
 
 const images = [w1, w2, w3, w4, w5, w6, w7, w8]
 
@@ -18,32 +19,55 @@ const Showcase = () => {
     function render() {
         return images.map((el, i) => {
             return (
-                <Col key={i}>
+                <Grid 
+                    item
+                    key={i}
+                    xs={12} 
+                    md={6} 
+                    lg={3}
+                >
                     <motion.div initial={{ opacity: 0, y: 100 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.15 * i }}>
-                        <Card className="rounded shadow border border-dark">
-                            <Card.Img style={{height: '50vh'}} variant="top" src={el} />
+                        <Card>
+                            <CardMedia
+                                component='img'
+                                height='500'
+                                image={el}
+                                alt='Promo'
+                            />
                         </Card>
                     </motion.div>
-                </Col>
+                </Grid>
             )
         })
     }
 
     return (
-        <Container id="galery" fluid>
-            <Row className="justify-content-center">
-                <Col lg={6}>
-                    <motion.h1 className="text-center" initial={{ opacity: 0, scale: 0 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{duration: 1}}>Néhány munkám</motion.h1>
-                    <motion.p className="text-center" initial={{ opacity: 0, scale: 0 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{duration: 1, delay: 1}}>Igyekszem minden
-                        vendégemből a maximumot kihozni, az arc és fejformájuknak megfelelő
-                        fazonú frizurát és szakállat készíteni számukra.
-                    </motion.p>
-                </Col>
-            </Row>
-            <Row xs={1} md={2} lg={4} className="g-4">
+        <Fragment>
+            <Grid
+                container
+                item
+                direction='row'
+                justifyContent='center'
+                alignItems='center'
+                lg={6}
+                sx={{ m: 'auto', textAlign: 'center', color: '#e6a400' }}
+            >
+                <motion.h1 initial={{ opacity: 0, scale: 0 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 1 }}>Néhány munkám</motion.h1>
+                <motion.p initial={{ opacity: 0, scale: 0 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ duration: 1, delay: 1 }}>Igyekszem minden
+                    vendégemből a maximumot kihozni, az arc és fejformájuknak megfelelő
+                    fazonú frizurát és szakállat készíteni számukra.
+                </motion.p>
+            </Grid>
+            <Grid
+                container
+                direction='row'
+                justifyContent='center'
+                spacing={2}
+                sx={{ mt: 3 }}
+            >
                 {render()}
-            </Row>
-        </Container>
+            </Grid>
+        </Fragment>
     )
 }
 

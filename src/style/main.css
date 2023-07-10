@@ -37,7 +37,7 @@ a{
 
 .branding{
     position: relative;
-    margin-bottom: 35vh;
+    min-height: 75vh;
 }
 
 .branding::before{
@@ -100,7 +100,7 @@ a{
 }
 
 .intro{
-    color: rgb(230, 164, 0);
+    color: #e6a400;
     text-align: justify;
 }
 
@@ -217,4 +217,20 @@ a{
     }
 }
 
+.max-height{
+    height:88vh;
+    background-image: url('./images/banner.png');
+    background-size: cover;
+    background-position: center;
+}
 
+#login-panel{
+    background: rgba(57, 57, 57, 0.616);
+    backdrop-filter: blur( 11.5px );
+    -webkit-backdrop-filter: blur( 11.5px );
+    min-height: 50vh;
+}
+
+#login-panel form{
+    z-index: 1;
+}

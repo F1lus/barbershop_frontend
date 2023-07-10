@@ -1,71 +1,53 @@
+import {
+    TableContainer, Paper, Table,
+    TableHead, TableRow, TableCell,
+    TableBody,
+    Grid
+} from "@mui/material"
 import { motion } from "framer-motion"
-import { Container, Table } from "react-bootstrap"
+import { useCallback, useEffect, useState } from "react"
+import Notify from "../../components/notification"
+import api from "../../api"
 
-const priceObjectArray = [
-    {
-        type: 'Hajvágás géppel',
-        price: '3000 Ft',
-        time: '45 perc'
-    },
-    {
-        type: 'Szakállvágás (géppel, borotvával)',
-        price: '2000 Ft',
-        time: '20 perc'
-    },
-    {
-        type: 'Hajvágás géppel és ollóval',
-        price: '3500 Ft',
-        time: '45 perc'
-    },
-    {
-        type: 'Gyermek hajvágás',
-        price: '3000 Ft',
-        time: '30-45 perc'
-    },
-    {
-        type: 'HairBeard Combo (hajvágás és szakállvágás)',
-        price: '5000 Ft',
-        time: '60 perc'
-    },
-    {
-        type: 'Hajfestés/Melír',
-        price: '10500 Ft',
-        time: '60 perc'
-    },
-    {
-        type: 'Szolárium',
-        price: '100 Ft/perc',
-        time: 'Tetszőleges'
-    },
-    {
-        type: 'Szolárium - Bérlet !HAMAROSAN!',
-        price: '80 Ft/perc',
-        time: 'Tetszőleges'
-    },
-    {
-        type: 'Hajmosás',
-        price: 'Ingyenes',
-        time: '15 perc'
-    },
-]
+const Pricing = ({ setLoading, setError, show, setShow, error }) => {
 
-const Pricing = () => {
+    const [state, setState] = useState({ services: [], error: null })
 
-    const renderTableTr = () => {
-        return priceObjectArray.map((priceObj, index) => {
+    useEffect(() => {
+        setLoading(true)
+        api
+            .post("/api/services")
+            .then(res => {
+                const { features } = res.data
+                setState(prev => ({ ...prev, services: features }))
+                setLoading(false)
+            })
+            .catch(err => {
+                const error = err.toJSON()
+    
+                setError(error.message)
+                setLoading(false)
+            })
+    }, [setLoading, setError])
+
+    const renderTableRows = useCallback(() => {
+        return state.services.map((priceObj, index) => {
             return (
-                <tr key={index} className="text-white">
-                    <td className="border-end border-warning">{priceObj.type}</td>
-                    <td className="border-end border-warning">{priceObj.price}</td>
-                    <td className="border-bottom border-warning">{priceObj.time}</td>
-                </tr>
+                <TableRow key={index} className="text-white" sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                    <TableCell sx={{ color: 'white', borderColor: '#e6a400' }} >{priceObj.type}</TableCell>
+                    <TableCell sx={{ color: 'white', borderColor: '#e6a400' }}>
+                        {priceObj.price === 0 ? "Ingyenes" : `${priceObj.price} Ft`}
+                    </TableCell>
+                    <TableCell sx={{ color: 'white', borderColor: '#e6a400' }}>{priceObj.time} perc</TableCell>
+                </TableRow>
             )
         })
-    }
+    }, [state.services])
 
     return (
-        <motion.div key="prices">
-            <Container className="mt-5">
+        <>
+            <Notify show={show} message={error} setParentState={setShow} severity='error' />
+            <Grid sx={{ mt: 5, mb: 5 }}>
                 <motion.h1
                     initial={{ y: -200, opacity: 0 }}
                     animate={{ y: 0, opacity: 1 }}
@@ -74,26 +56,29 @@ const Pricing = () => {
                 >
                     A környék legjobb árai
                 </motion.h1>
+
                 <motion.div
                     initial={{ x: 200, opacity: 0 }}
                     animate={{ x: 0, opacity: 1 }}
                     transition={{ duration: 1, delay: 1 }}
                 >
-                    <Table className="text-gold" variant="black" responsive='sm'>
-                        <thead>
-                            <tr>
-                                <th className="border-end border-warning">Típus</th>
-                                <th className="border-end border-warning">Ár</th>
-                                <th>Időtartam</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {renderTableTr()}
-                        </tbody>
-                    </Table>
+                    <TableContainer component={Paper} sx={{ backgroundColor: 'black', width: '75%', m: 'auto' }}>
+                        <Table sx={{}} aria-label="simple table">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell sx={{ color: '#e6a400', fontWeight: 'bold', borderColor: '#e6a400' }}>Szolgáltatás</TableCell>
+                                    <TableCell sx={{ color: '#e6a400', fontWeight: 'bold', borderColor: '#e6a400' }}>Ár</TableCell>
+                                    <TableCell sx={{ color: '#e6a400', fontWeight: 'bold', borderColor: '#e6a400' }}>Időtartam</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {renderTableRows()}
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
                 </motion.div>
-            </Container>
-        </motion.div>
+            </Grid>
+        </>
     )
 }
 
