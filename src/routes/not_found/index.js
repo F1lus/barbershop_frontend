@@ -39,7 +39,7 @@ const NotFound = () => {
                     <br /><br />
                     Úgy néz ki, hogy valami elírás történt!
                     <br />
-                    Ilyen aloldallal sajnos nem rendelkezünk. <i class="bi bi-emoji-frown-fill"></i>
+                    Ilyen aloldallal sajnos nem rendelkezünk. <i className="bi bi-emoji-frown-fill"></i>
                 </motion.h1>
             </Grid>
 

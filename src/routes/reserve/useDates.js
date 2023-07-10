@@ -17,7 +17,7 @@ const useDates = (dateString, handleLoading, setError) => {
                 setError(err.message)
                 handleLoading(false)
             })
-    },[dateString, handleLoading, setError])
+    }, [dateString, handleLoading, setError])
 
     return dates
 }

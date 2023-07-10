@@ -27,12 +27,12 @@ const useError = (setShow) => {
             setError("Belső hiba történt. Kérjük frissítse az oldalt!")
         }else if(error === 'already-reserved'){
             setError("Ez az időpont már foglalt!")
-        }else if(error === 'Request failed with status code 404'){
+        }else if(error === 404){
             setError('Megszakadt a kapcsolat a szerverrel!')
         }
 
         setShow(true)
-    }, [error, setShow])
+    }, [ error, setShow ])
 
     return [error, setError]
 

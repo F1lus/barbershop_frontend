@@ -1,6 +1,10 @@
 import { Backdrop, CircularProgress } from "@mui/material"
+import { useContext } from "react"
+import { LoadingContext } from "./context"
 
-const Loading = ({ load }) => {
+const Loading = () => {
+
+    const load = useContext(LoadingContext)
 
     return (
         <>

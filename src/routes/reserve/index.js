@@ -1,7 +1,7 @@
 import { DateTime } from "luxon"
 import { getMonthName, getDayName, calculateWorkdays } from "./DateWorker"
 
-import { useCallback, useRef, useState } from "react"
+import { useCallback, useContext, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { motion } from "framer-motion"
@@ -20,6 +20,7 @@ import {
     FormControlLabel, Checkbox, Button,
     MenuItem
 } from "@mui/material"
+import { LoadingContext } from "../../components/loading/context"
 
 const services = [
     "Hajvágás géppel", "Szakállvágás (géppel, borotvával)", "Hajvágás géppel és ollóval",
@@ -32,13 +33,9 @@ const theme = createTheme({
     }
 })
 
-/*const inputStyle = {
-    style: {
-        background: '#292929'
-    }
-}*/
+const Reserve = ({ setLoading, setError, error, show, setShow }) => {
 
-const Reserve = () => {
+    const isLoading = useContext(LoadingContext)
 
     const [currentDay, setCurrentDay] = useState()
     const [form, setForm] = useState({
@@ -51,12 +48,8 @@ const Reserve = () => {
         lastname: '',
         phone: ''
     })
-    const [show, setShow] = useState(false)
-    const [isLoading, setLoading] = useState(false)
 
-    const [err, setErr] = useError(setShow)
-
-    const dates = useDates(currentDay, setLoading, setErr)
+    const dates = useDates(currentDay, setLoading, setError)
 
     const dateRef = useRef()
 
@@ -216,7 +209,7 @@ const Reserve = () => {
         }
 
         if (!form.services) {
-            setErr('no-service')
+            setError('no-service')
             return
         }
 
@@ -227,7 +220,7 @@ const Reserve = () => {
                 let data = res.data
 
                 if (data.error) {
-                    setErr(data.error)
+                    setError(data.error)
                     return
                 }
 
@@ -235,20 +228,19 @@ const Reserve = () => {
                     const date = data.date.start.split("T")[0]
                     navigate(`/confirm?date=${date}&time=${data.time}&service=${services.indexOf(form.services)}`)
                 } else {
-                    setErr('Network Error')
+                    setError('Network Error')
                     setShow(true)
                 }
             })
             .catch(err => {
                 setLoading(false)
-                setErr(err)
+                setError(err)
             })
-    }, [form, currentDay, navigate, setErr])
+    }, [form, currentDay, navigate, setError, setLoading, setShow])
 
     return (
         <>
-            <Loading load={isLoading} />
-            <Notify show={show} message={err} setParentState={setShow} severity='error' />
+            <Notify show={show} message={error} setParentState={setShow} severity='error' />
             <motion.div>
                 <Grid
                     container

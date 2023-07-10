@@ -3,7 +3,6 @@ import { Snackbar, Alert } from '@mui/material'
 
 export default function Notify({ severity, message, show, setParentState }) {
 
-
     const handleClose = useCallback(e => {
         setParentState(false)
     }, [setParentState])
