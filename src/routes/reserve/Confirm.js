@@ -92,7 +92,7 @@ const Confirm = () => {
                     className="text-white"
                 >
                     Az Ön által foglalt szolgáltatás:
-                    <span className="text-warning"> {services[response.service]}</span>
+                    <span className="text-warning"> {decodeURI(response.service)}</span>
                 </motion.h2>
             </Grid>
         </>

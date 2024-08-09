@@ -4,6 +4,7 @@ import { motion } from "framer-motion"
 import Wave from "react-wavify"
 import api from "../../api"
 import Notify from "../../components/notification"
+import { useNavigate } from "react-router-dom"
 
 const theme = createTheme({
     palette: {
@@ -16,6 +17,8 @@ export default function Login() {
     const [formData, setFormData] = useState({ username: '', password: '', notifyMsg: '' })
     const [open, setOpen] = useState(false)
 
+    const navigate = useNavigate()
+
     const handleChange = useCallback(e => 
         setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }))
     , [])
@@ -24,13 +27,21 @@ export default function Login() {
         e.preventDefault()
         api.post('/login', formData)
             .then(res => {
-                console.log(res)
+                if(res.data.token){
+                    localStorage.setItem('access_params', JSON.stringify(
+                        { 
+                            user: formData.username, 
+                            token: res.data.token 
+                        }
+                    ))
+                    navigate('/admin')
+                }
             })
             .catch(err => {
                 setFormData(prev => ({ ...prev, notifyMsg: 'Hiba történt a bejelentkezés során!' }))
                 setOpen(true)
             })
-    }, [formData])
+    }, [formData, navigate])
 
     return (
         <motion.div

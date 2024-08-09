@@ -19,6 +19,7 @@ import Login from './routes/login'
 import Loading from './components/loading'
 import { LoadingContext } from './components/loading/context'
 import { ErrorContext, useError } from './components/error/context'
+import Admin from './routes/admin'
 
 const paths = ['/', '/pricing', '/reserve']
 
@@ -122,6 +123,16 @@ function App() {
               <Route
                 path='/login'
                 element={<Login setLoading={setLoading} />}
+              />
+
+              <Route
+                path='/admin'
+                element={
+                  <Admin 
+                    setLoading={setLoading} 
+                    setError={handleError}
+                  />
+                }
               />
 
               <Route path='*' element={<NotFound />} />

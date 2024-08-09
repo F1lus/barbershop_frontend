@@ -1,7 +1,7 @@
 import { DateTime } from "luxon"
 import { getMonthName, getDayName, calculateWorkdays } from "./DateWorker"
 
-import { useCallback, useContext, useRef, useState } from "react"
+import { useCallback, useContext, useEffect, useRef, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 
 import { motion } from "framer-motion"
@@ -10,8 +10,6 @@ import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import API from '../../api'
 import useDates from "./useDates"
 
-import useError from "./useError"
-import Loading from "../../components/loading"
 import Notify from "../../components/notification"
 
 import {
@@ -21,11 +19,6 @@ import {
     MenuItem
 } from "@mui/material"
 import { LoadingContext } from "../../components/loading/context"
-
-const services = [
-    "Hajvágás géppel", "Szakállvágás (géppel, borotvával)", "Hajvágás géppel és ollóval",
-    "Gyermek hajvágás", "HairBeard Combo (hajvágás és szakállvágás)", "Hajfestés/Melír"
-]
 
 const theme = createTheme({
     palette: {
@@ -37,7 +30,7 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
 
     const isLoading = useContext(LoadingContext)
 
-    const [currentDay, setCurrentDay] = useState()
+    const [currentDay, setCurrentDay] = useState(undefined)
     const [form, setForm] = useState({
         agree1: '',
         agree2: '',
@@ -48,12 +41,40 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
         lastname: '',
         phone: ''
     })
+    const [ apiData, setApiData ] = useState({ days: [], services: [] })
 
-    const dates = useDates(currentDay, setLoading, setError)
+    const dates = useDates(currentDay, form.services, setLoading, setError)
 
     const dateRef = useRef()
 
     const navigate = useNavigate();
+
+    const setWorkDays = days => {
+        setApiData(prev => ({ ...prev, days }))
+    }
+
+    const setServices = services => {
+        setApiData(prev => ({ ...prev, services }))
+    }
+
+    useEffect(() => {
+        setLoading(true)
+        API.post('/workdays')
+            .then(res => {
+                setLoading(false)
+                if(res.data.days){
+                    setWorkDays(res.data.days)
+                }
+
+                if(res.data.services){
+                    setServices(res.data.services)
+                }
+            })
+            .catch(err => {
+                setError('Hiba a munkanapok lekérése során!')
+                setLoading(false)
+            })
+    }, [setError, setLoading])
 
     const dateSelect = useCallback((event, date) => {
         event.preventDefault()
@@ -67,7 +88,7 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
     }, [])
 
     const renderDays = useCallback(() => {
-        const temp = calculateWorkdays()
+        const temp = calculateWorkdays(apiData.days)
         const lines = []
 
         const start = getMonthName(DateTime.fromISO(temp[0]))
@@ -127,7 +148,7 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
             </div>
         )
 
-    }, [dateSelect, isLoading])
+    }, [dateSelect, isLoading, apiData.days])
 
     const handleChange = useCallback(e => {
         const name = e.target.name
@@ -149,16 +170,16 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
             fullWidth
             required
         >
-            {services.map((el, i) => (
+            {apiData.services.map((el, i) => (
                 <MenuItem key={i} value={el}>
                     {el}
                 </MenuItem>
             ))}
         </TextField>
-    ), [handleChange, isLoading, form])
+    ), [handleChange, isLoading, form, apiData.services])
 
     const renderAppointments = useCallback(() => {
-        if (!dates) {
+        if (!currentDay) {
             return (
                 <TextField
                     select
@@ -180,26 +201,46 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
             )
         }
 
+        if(form.services.length === 0){
+            return <TextField
+                    select
+                    label="Először válasszon egy szolgáltatást!"
+                    error
+                    name='time'
+                    value={form.time}
+                    onChange={handleChange}
+                    variant="filled"
+                    disabled={true}
+                    color='warning'
+                    fullWidth
+                    required
+                >
+                    <MenuItem value={-1}>
+                        Először válasszon egy szolgáltatást!
+                    </MenuItem>
+                </TextField>
+        }
+
         return (
             <TextField
                 select
-                label={dates.length === 0 ? 'Erre a napra már nincs szabad időpont!' : 'Válasszon időpontot!'}
-                error={dates.length === 0}
+                label={!dates || dates.length === 0 ? 'Erre a napra már nincs szabad időpont!' : 'Válasszon időpontot!'}
+                error={!dates || dates.length === 0}
                 name='time'
                 value={form.time}
                 onChange={handleChange}
                 variant="filled"
-                disabled={isLoading || dates.length === 0}
+                disabled={isLoading || dates?.length === 0}
                 color='warning'
                 fullWidth
                 required
             >
-                {dates.length === 0 ? null : dates.map((el, i) => (
+                {!dates || dates.length === 0 ? null : dates.map((el, i) => (
                     <MenuItem value={JSON.stringify(el)} key={i}>{el.start} - {el.end}</MenuItem>
                 ))}
             </TextField>
         )
-    }, [dates, handleChange, isLoading, form])
+    }, [dates, handleChange, isLoading, form, currentDay])
 
     const handleSubmit = useCallback(e => {
         e.preventDefault()
@@ -226,7 +267,7 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
 
                 if (data.result) {
                     const date = data.date.start.split("T")[0]
-                    navigate(`/confirm?date=${date}&time=${data.time}&service=${services.indexOf(form.services)}`)
+                    navigate(`/confirm?date=${date}&time=${data.time}&service=${encodeURI(form.services)}`)
                 } else {
                     setError('Network Error')
                     setShow(true)
@@ -236,7 +277,7 @@ const Reserve = ({ setLoading, setError, error, show, setShow }) => {
                 setLoading(false)
                 setError(err)
             })
-    }, [form, currentDay, navigate, setError, setLoading, setShow])
+    }, [form, currentDay, navigate, setError, setLoading, setShow, apiData.services])
 
     return (
         <>
