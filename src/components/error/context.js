@@ -26,7 +26,7 @@ export const useError = (setShow) => {
         if(Object.keys(errorObject).includes(error)){
             setError(errorObject[error])
         }else{
-            setError("Megszakadt a kapcsolat a szerverrel.")
+            setError("Nem lehet feldolgozni a foglalást. Kérjük ellenőrizze az adatait!")
         }
 
         setShow(true)

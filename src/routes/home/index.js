@@ -10,9 +10,6 @@ import { Link } from "react-router-dom"
 import ChooseMe from "./ChooseMe"
 import Intro from "./Intro"
 import Showcase from "./Showcase"
-import { useEffect } from "react";
-
-
 
 const Home = () => {
 

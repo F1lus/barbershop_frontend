@@ -2,13 +2,15 @@ import { useEffect, useState } from "react"
 
 import api from "../../api"
 
-const useDates = (dateString, handleLoading, setError) => {
+const useDates = (dateString, service, handleLoading, setError) => {
 
     const [dates, setDates] = useState()
 
     useEffect(() => {
+        if(!service) return
+
         handleLoading(true)
-        api.post('/appointments', {workday: dateString})
+        api.post('/appointments', {workday: dateString, service})
             .then(res => {
                 setDates(res.data.appointment)
                 handleLoading(false)
@@ -17,7 +19,7 @@ const useDates = (dateString, handleLoading, setError) => {
                 setError(err.message)
                 handleLoading(false)
             })
-    }, [dateString, handleLoading, setError])
+    }, [dateString, handleLoading, setError, service])
 
     return dates
 }
